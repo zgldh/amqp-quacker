@@ -1,0 +1,17 @@
+version: "3"
+services:
+  rabbitmq:
+    image: rabbitmq:3
+    environment:
+      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 512MiB
+    ports:
+      - "5672:5672"
+  quacker:
+    build: ./quacker
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      RABBITMQ_EXCHANGE_NAME: duck-pool
+    command: ["php", "main.php"]
