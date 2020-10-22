@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"log"
-	"math"
 	"os/exec"
 	"strconv"
 	"time"
@@ -65,6 +64,11 @@ func (q *Quacker) sendMessage(message string) {
 func (q *Quacker) Start() error {
 	fmt.Printf("Quacker starting...\n")
 
+	interval, err := strconv.Atoi(q.config.Interval)
+	if err != nil {
+		return err
+	}
+
 	payload := ""
 
 	fmt.Printf("RabbitMQ server %s:%s\n", q.config.Host, q.config.Port)
@@ -75,7 +79,7 @@ func (q *Quacker) Start() error {
 		payload = q.getPayload()
 		q.sendMessage(payload)
 		fmt.Println(payload)
-		time.Sleep(time.Second * time.Duration(interval))
+		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
 
 	fmt.Println("Publisher Disconnected")
