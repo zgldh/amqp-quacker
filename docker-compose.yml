@@ -1,17 +1,24 @@
 version: "3"
-services:
-  rabbitmq:
-    image: rabbitmq:3
-    environment:
-      RABBITMQ_VM_MEMORY_HIGH_WATERMARK: 512MiB
-    ports:
-      - "5672:5672"
+
+networks:
   quacker:
-    build: ./quacker
+    driver: bridge
+
+services:
+  # quacker
+  quacker:
+    build:
+      context: .
     environment:
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: guest
-      RABBITMQ_PASS: guest
-      RABBITMQ_EXCHANGE_NAME: duck-pool
-    command: ["php", "main.php"]
+      QUACKER_HOST: $QUACKER_HOST
+      QUACKER_PORT: $QUACKER_PORT
+      QUACKER_USERNAME: $QUACKER_USERNAME
+      QUACKER_PASSWORD: $QUACKER_PASSWORD
+      QUACKER_EXCHANGE: $QUACKER_EXCHANGE
+      QUACKER_TOPIC: $QUACKER_TOPIC
+      QUACKER_INTERVAL: $QUACKER_INTERVAL
+      QUACKER_DATAFILE: $QUACKER_DATAFILE
+    volumes:
+      - ./data.json:/data.json
+    networks:
+      - quacker
