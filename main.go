@@ -23,7 +23,7 @@ func main() {
 		Port:     getEnv("QUACKER_PORT", "5672"),
 		Username: getEnv("QUACKER_USERNAME", ""),
 		Password: getEnv("QUACKER_PASSWORD", ""),
-		Exchange: getEnvOrFail("QUACKER_EXCHANGE"),
+		Exchange: getEnv("QUACKER_EXCHANGE",""),
 		Topic:    getEnvOrFail("QUACKER_TOPIC"),
 		Interval: getEnv("QUACKER_INTERVAL", "1000"),
 		DataFile: getEnv("QUACKER_DATAFILE", "/data.json"),
