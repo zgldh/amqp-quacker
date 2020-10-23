@@ -14,7 +14,7 @@ services:
       QUACKER_PORT: "5672"
       QUACKER_USERNAME: "rabbitmq-username"
       QUACKER_PASSWORD: "rabbitmq-password"
-      QUACKER_EXCHANGE: "default"
+      QUACKER_EXCHANGE: "amq.topic"
       QUACKER_TOPIC: "your-topic"
       QUACKER_CLIENTID: "rabbitmq-quacker"
       QUACKER_INTERVAL: "1000"

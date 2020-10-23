@@ -42,7 +42,7 @@ func (q *Quacker) Close() {
 // sendMessage - Send message to amqp server
 func (q *Quacker) sendMessage(message string) {
 	command := fmt.Sprintf(
-		"amqpc -u amqp://%s:%s@%s:%s/ -g 1 -i %s -n 1 -p %s %s %s",
+		"amqpc -u amqp://%s:%s@%s:%s/ -g 1 -i %s -n 1 -p %s %s testmessageha",
 		q.config.Username,
 		q.config.Password,
 		q.config.Host,
@@ -50,13 +50,13 @@ func (q *Quacker) sendMessage(message string) {
 		q.config.Interval,
 		q.config.Exchange,
 		q.config.Topic,
-		message,
+		//message,
 	)
 
 	cmd := exec.Command(command)
 	err := cmd.Run()
 	if err != nil {
-		log.Printf("Command finished with error %v", err)
+		log.Printf("Command finished with error %v\n", err)
 	}
 }
 
@@ -77,8 +77,8 @@ func (q *Quacker) Start() error {
 	for true {
 		fmt.Printf("%s ---- Publish ----\n", time.Now())
 		payload = q.getPayload()
+		//fmt.Println(payload)
 		q.sendMessage(payload)
-		fmt.Println(payload)
 		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
 
