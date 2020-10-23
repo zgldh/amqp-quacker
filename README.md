@@ -3,8 +3,8 @@
 Send mock data to your AMQP exchange.
 
 ## Usage docker
-Direct to a queue
-`
+Direct to a queue  
+```
 docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_PORT=5672 
  -e QUACKER_USERNAME=amqp-username 
@@ -12,9 +12,10 @@ docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_TOPIC=my-queue-name 
  -v /home/zgldh/my-project/data.json:/data.json 
  zgldh/amqp-quacker
-`
-Via an exchange
-`
+```  
+
+Via an exchange  
+```
 docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_PORT=5672 
  -e QUACKER_USERNAME=amqp-username 
@@ -23,7 +24,7 @@ docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_TOPIC=my-topic/telemetry 
  -v /home/zgldh/my-project/data.json:/data.json 
  zgldh/amqp-quacker
-`
+```
 
 ## Usage docker-compose
 
