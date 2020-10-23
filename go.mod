@@ -1,4 +1,4 @@
-module rabbitmq-quacker
+module amqp-quacker
 
 go 1.15
 

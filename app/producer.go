@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -36,16 +36,18 @@ func NewProducer(amqpURI, exchange, exchangeType, key, ctag string, reliable boo
 	}
 
 	log.Printf("Declaring Exchange (%s)", exchange)
-	if err := p.channel.ExchangeDeclare(
-		exchange,     // name
-		exchangeType, // type
-		true,         // durable
-		false,        // auto-deleted
-		false,        // internal
-		false,        // noWait
-		nil,          // arguments
-	); err != nil {
-		return nil, fmt.Errorf("Exchange Declare: %s", err)
+	if len(exchange)>0 {
+		if err := p.channel.ExchangeDeclare(
+			exchange,     // name
+			exchangeType, // type
+			true,         // durable
+			false,        // auto-deleted
+			false,        // internal
+			false,        // noWait
+			nil,          // arguments
+		); err != nil {
+			return nil, fmt.Errorf("Exchange Declare: %s", err)
+		}
 	}
 
 	// Reliable publisher confirms require confirm.select support from the

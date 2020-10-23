@@ -1,5 +1,5 @@
 /*
- * rabbitmq-quacker
+ * amqp-quacker
  *
  *
  * Contact: zhangwb@shinetechchina.com
@@ -9,7 +9,8 @@ package main
 
 import (
 	"fmt"
-	"rabbitmq-quacker/app"
+	"log"
+	"amqp-quacker/app"
 	"os"
 	"runtime"
 )
@@ -17,9 +18,9 @@ import (
 func main() {
 	fmt.Printf("Server started\n")
 
-	rabbitmqConfig := app.QuackerConfig{
-		Host:     getEnv("QUACKER_HOST", "127.0.0.1"), // "rabbitmq.osvie.com",
-		Port:     getEnv("QUACKER_PORT", "1883"),
+	amqpConfig := app.QuackerConfig{
+		Host:     getEnv("QUACKER_HOST", "127.0.0.1"),
+		Port:     getEnv("QUACKER_PORT", "5672"),
 		Username: getEnv("QUACKER_USERNAME", ""),
 		Password: getEnv("QUACKER_PASSWORD", ""),
 		Exchange: getEnvOrFail("QUACKER_EXCHANGE"),
@@ -28,12 +29,15 @@ func main() {
 		DataFile: getEnv("QUACKER_DATAFILE", "/data.json"),
 	}
 
-	quacker := app.NewQuacker(rabbitmqConfig)
+	quacker := app.NewQuacker(amqpConfig)
 	runtime.SetFinalizer(&quacker, func(obj *app.Quacker) {
 		obj.Close()
 	})
 
-	quacker.Start()
+	err := quacker.Start()
+	if(err != nil){
+		log.Println(err)
+	}
 	defer quacker.Close()
 }
 

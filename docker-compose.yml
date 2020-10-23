@@ -10,15 +10,14 @@ services:
     build:
       context: .
     environment:
-      QUACKER_HOST: "rabbitmq.host.com"
-      QUACKER_PORT: "5672"
-      QUACKER_USERNAME: "rabbitmq-username"
-      QUACKER_PASSWORD: "rabbitmq-password"
-      QUACKER_EXCHANGE: "amq.topic"
-      QUACKER_TOPIC: "your-topic"
-      QUACKER_CLIENTID: "rabbitmq-quacker"
-      QUACKER_INTERVAL: "1000"
-      QUACKER_DATAFILE: "/data.json"
+      QUACKER_HOST: $QUACKER_HOST
+      QUACKER_PORT: $QUACKER_PORT
+      QUACKER_USERNAME: $QUACKER_USERNAME
+      QUACKER_PASSWORD: $QUACKER_PASSWORD
+      QUACKER_EXCHANGE: $QUACKER_EXCHANGE
+      QUACKER_TOPIC: $QUACKER_TOPIC
+      QUACKER_INTERVAL: $QUACKER_INTERVAL
+      QUACKER_DATAFILE: $QUACKER_DATAFILE
     volumes:
       - ./data.json:/data.json
     networks:

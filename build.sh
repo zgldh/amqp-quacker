@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t zgldh/rabbitmq-quacker:latest ./
+docker build -t zgldh/amqp-quacker:latest ./

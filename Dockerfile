@@ -4,8 +4,7 @@ COPY ./amqpc /go/src/amqpc
 ENV CGO_ENABLED=0
 RUN go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
 RUN go get
-RUN go build
-RUN ls /go/src/amqpc
+RUN go build -o amqpc
 
 FROM zgldh/docker-golang-builder:1.15.2-alpine3.12-git AS build_app
 WORKDIR /go/src

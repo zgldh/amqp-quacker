@@ -2,13 +2,11 @@ package app
 
 import (
 	"fmt"
-	"log"
-	"os/exec"
 	"strconv"
 	"time"
 )
 
-// QuackerConfig - Configuration of RabbitMQ
+// QuackerConfig - Configuration of AMQP
 //server
 type QuackerConfig struct {
 	Host     string
@@ -39,30 +37,25 @@ func NewQuacker(config QuackerConfig) Quacker {
 func (q *Quacker) Close() {
 }
 
-// sendMessage - Send message to amqp server
-func (q *Quacker) sendMessage(message string) {
-	command := fmt.Sprintf(
-		"amqpc -u amqp://%s:%s@%s:%s/ -g 1 -i %s -n 1 -p %s %s testmessageha",
+// Start - Start to subscribe MQTT and tranfer data into Pgsql
+func (q *Quacker) Start() error {
+	fmt.Printf("Quacker starting...\n")
+
+	reliable := true
+	ctag := "amqp-quacker"
+	key := q.config.Topic
+	exchangeType := "direct"
+	exchange := q.config.Exchange
+	amqpURI := fmt.Sprintf("amqp://%s:%s@%s:%s/",
 		q.config.Username,
 		q.config.Password,
 		q.config.Host,
 		q.config.Port,
-		q.config.Interval,
-		q.config.Exchange,
-		q.config.Topic,
-		//message,
 	)
-
-	cmd := exec.Command(command)
-	err := cmd.Run()
+	producer, err := NewProducer(amqpURI, exchange, exchangeType, key, ctag, reliable)
 	if err != nil {
-		log.Printf("Command finished with error %v\n", err)
+		return err
 	}
-}
-
-// Start - Start to subscribe MQTT and tranfer data into Pgsql
-func (q *Quacker) Start() error {
-	fmt.Printf("Quacker starting...\n")
 
 	interval, err := strconv.Atoi(q.config.Interval)
 	if err != nil {
@@ -71,14 +64,13 @@ func (q *Quacker) Start() error {
 
 	payload := ""
 
-	fmt.Printf("RabbitMQ server %s:%s\n", q.config.Host, q.config.Port)
+	fmt.Printf("AMQP server %s:%s\n", q.config.Host, q.config.Port)
 	fmt.Printf("Exchange: %s\n", q.config.Exchange)
 	fmt.Println("Publisher Started to: " + q.config.Topic)
 	for true {
 		fmt.Printf("%s ---- Publish ----\n", time.Now())
 		payload = q.getPayload()
-		//fmt.Println(payload)
-		q.sendMessage(payload)
+		producer.Publish(q.config.Exchange, q.config.Topic, payload)
 		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
 
