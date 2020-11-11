@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"github.com/streadway/amqp"
-	"log"
 )
 
 type Producer struct {
@@ -11,62 +10,59 @@ type Producer struct {
 	channel    *amqp.Channel
 	tag        string
 	done       chan error
+	dryRun     bool
 }
 
-func NewProducer(amqpURI, exchange, exchangeType, key, ctag string, reliable bool) (*Producer, error) {
+func NewProducer(amqpURI, exchange, exchangeType, key, ctag string, dryrun bool) (*Producer, error) {
 	p := &Producer{
 		connection: nil,
 		channel:    nil,
 		tag:        ctag,
 		done:       make(chan error),
+		dryRun:     dryrun,
 	}
 
 	var err error
 
-	log.Printf("Connecting to %s", amqpURI)
-	p.connection, err = amqp.Dial(amqpURI)
-	if err != nil {
-		return nil, fmt.Errorf("Dial: ", err)
-	}
+	if dryrun {
+		fmt.Println("Dry Run")
+	} else {
 
-	log.Printf("Getting Channel ")
-	p.channel, err = p.connection.Channel()
-	if err != nil {
-		return nil, fmt.Errorf("Channel: ", err)
-	}
-
-	log.Printf("Declaring Exchange (%s)", exchange)
-	if len(exchange)>0 {
-		if err := p.channel.ExchangeDeclare(
-			exchange,     // name
-			exchangeType, // type
-			true,         // durable
-			false,        // auto-deleted
-			false,        // internal
-			false,        // noWait
-			nil,          // arguments
-		); err != nil {
-			return nil, fmt.Errorf("Exchange Declare: %s", err)
+		fmt.Printf("Connecting to %s", amqpURI)
+		p.connection, err = amqp.Dial(amqpURI)
+		if err != nil {
+			return nil, fmt.Errorf("Dial: ", err)
 		}
+
+		fmt.Printf("Getting Channel ")
+		p.channel, err = p.connection.Channel()
+		if err != nil {
+			return nil, fmt.Errorf("Channel: ", err)
+		}
+
+		fmt.Printf("Declaring Exchange (%s)", exchange)
+		if len(exchange) > 0 {
+			if err := p.channel.ExchangeDeclare(
+				exchange,     // name
+				exchangeType, // type
+				true,         // durable
+				false,        // auto-deleted
+				false,        // internal
+				false,        // noWait
+				nil,          // arguments
+			); err != nil {
+				return nil, fmt.Errorf("Exchange Declare: %s", err)
+			}
+		}
+
 	}
-
-	// Reliable publisher confirms require confirm.select support from the
-	// connection.
-	// if reliable {
-	// 	if err := p.channel.Confirm(false); err != nil {
-	// 		return nil, fmt.Errorf("Channel could not be put into confirm mode: ", err)
-	// 	}
-
-	// 	ack, nack := p.channel.NotifyConfirm(make(chan uint64, 1), make(chan uint64, 1))
-
-	// 	// defer confirmOne(ack, nack)
-	// }
-
 	return p, nil
 }
 
 func (p *Producer) Publish(exchange, routingKey, body string) error {
-	log.Printf("Publishing %s (%dB)", body, len(body))
+	if p.dryRun {
+		return nil
+	}
 
 	if err := p.channel.Publish(
 		exchange,   // publish to an exchange
@@ -93,12 +89,12 @@ func (p *Producer) Publish(exchange, routingKey, body string) error {
 // set of unacknowledged sequence numbers and loop until the publishing channel
 // is closed.
 func confirmOne(ack, nack chan uint64) {
-	log.Printf("waiting for confirmation of one publishing")
+	fmt.Printf("waiting for confirmation of one publishing")
 
 	select {
 	case tag := <-ack:
-		log.Printf("confirmed delivery with delivery tag: %d", tag)
+		fmt.Printf("confirmed delivery with delivery tag: %d", tag)
 	case tag := <-nack:
-		log.Printf("failed delivery of delivery tag: %d", tag)
+		fmt.Printf("failed delivery of delivery tag: %d", tag)
 	}
 }

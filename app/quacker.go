@@ -17,6 +17,7 @@ type QuackerConfig struct {
 	Topic    string
 	Interval string // Interval - Seconds between two publish
 	DataFile string // DataFile - Data template file path
+	DryRun   bool
 }
 
 // Quacker - The quacker class.
@@ -41,7 +42,6 @@ func (q *Quacker) Close() {
 func (q *Quacker) Start() error {
 	fmt.Printf("Quacker starting...\n")
 
-	reliable := true
 	ctag := "amqp-quacker"
 	key := q.config.Topic
 	exchangeType := "direct"
@@ -52,7 +52,7 @@ func (q *Quacker) Start() error {
 		q.config.Host,
 		q.config.Port,
 	)
-	producer, err := NewProducer(amqpURI, exchange, exchangeType, key, ctag, reliable)
+	producer, err := NewProducer(amqpURI, exchange, exchangeType, key, ctag, q.config.DryRun)
 	if err != nil {
 		return err
 	}
@@ -62,15 +62,21 @@ func (q *Quacker) Start() error {
 		return err
 	}
 
+	publishLabel := "Publish"
+	if q.config.DryRun {
+		publishLabel = "Dry Run"
+	}
 	payload := ""
 
 	fmt.Printf("AMQP server %s:%s\n", q.config.Host, q.config.Port)
 	fmt.Printf("Exchange: %s\n", q.config.Exchange)
 	fmt.Println("Publisher Started to: " + q.config.Topic)
 	for true {
-		fmt.Printf("%s ---- Publish ----\n", time.Now())
+		fmt.Printf("%s ---- %s ----\n", time.Now(), publishLabel)
 		payload = q.getPayload()
 		producer.Publish(q.config.Exchange, q.config.Topic, payload)
+
+		fmt.Println(payload)
 		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
 

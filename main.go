@@ -8,9 +8,8 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"amqp-quacker/app"
+	"fmt"
 	"os"
 	"runtime"
 )
@@ -27,6 +26,7 @@ func main() {
 		Topic:    getEnvOrFail("QUACKER_TOPIC"),
 		Interval: getEnv("QUACKER_INTERVAL", "1000"),
 		DataFile: getEnv("QUACKER_DATAFILE", "/data.json"),
+		DryRun:   getEnv("QUACKER_DRYRUN", "") != "",
 	}
 
 	quacker := app.NewQuacker(amqpConfig)
@@ -36,7 +36,7 @@ func main() {
 
 	err := quacker.Start()
 	if(err != nil){
-		log.Println(err)
+		fmt.Println(err)
 	}
 	defer quacker.Close()
 }
