@@ -11,7 +11,7 @@ docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_PASSWORD=amqp-password
  -e QUACKER_TOPIC=my-queue-name 
  -v /home/zgldh/my-project/data.json:/data.json 
- zgldh/amqp-quacker
+ zgldh/amqp-quacker:1.0
 ```  
 
 Via an exchange  
@@ -23,7 +23,7 @@ docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_EXCHANGE=my-exchange
  -e QUACKER_TOPIC=my-topic/telemetry 
  -v /home/zgldh/my-project/data.json:/data.json 
- zgldh/amqp-quacker
+ zgldh/amqp-quacker:1.0
 ```
 
 ## Usage docker-compose
