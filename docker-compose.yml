@@ -17,9 +17,8 @@ services:
       QUACKER_EXCHANGE: $QUACKER_EXCHANGE
       QUACKER_TOPIC: $QUACKER_TOPIC
       QUACKER_INTERVAL: $QUACKER_INTERVAL
-      QUACKER_DATAFILE: $QUACKER_DATAFILE
       QUACKER_DRYRUN: $QUACKER_DRYRUN
     volumes:
-      - ./data.json:/data.json
+      - ${QUACKER_DATAFILE}:/data.json
     networks:
       - quacker
