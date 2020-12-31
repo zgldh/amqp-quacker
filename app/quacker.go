@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"time"
 )
@@ -61,6 +62,7 @@ func (q *Quacker) Start() error {
 	if err != nil {
 		return err
 	}
+	interval = int(math.Max(float64(interval), 1))
 
 	publishLabel := "Publish"
 	if q.config.DryRun {
