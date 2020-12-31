@@ -11,7 +11,7 @@ docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_PASSWORD=amqp-password
  -e QUACKER_TOPIC=my-queue-name 
  -v /home/zgldh/my-project/data.json:/data.json 
- zgldh/amqp-quacker:1.0
+ zgldh/amqp-quacker:1.1
 ```  
 
 Via an exchange  
@@ -23,7 +23,7 @@ docker run -e QUACKER_HOST=amqp.host.com
  -e QUACKER_EXCHANGE=my-exchange
  -e QUACKER_TOPIC=my-topic/telemetry 
  -v /home/zgldh/my-project/data.json:/data.json 
- zgldh/amqp-quacker:1.0
+ zgldh/amqp-quacker:1.1
 ```
 
 ## Usage docker-compose
@@ -52,7 +52,8 @@ QUACKER_DRYRUN| Dont push to server, just output payload. |`true` or keep it emp
 Please edit the file `data.json` to any text you want. It supports following placeholders:
 - `q:float:{min},{max}` to generate a float number between [min, max).
 - `q:int:{min},{max}` to generate an integer number between [min, max).
-- `q:string:{str1},{str2},{str3},...,{strn}` to get one string from n strings randomly.
+- `q:string:{str1},{str2},{str3},...,{strN}` to get one string from n strings randomly.
+- `q:timestamp` to get a current timestamp. You can custom the date format: `q:timestamp:Mon Jan _2 15:04:05 MST 2006` Please refer to: https://golang.org/src/time/format.go
 
 
 Currently, no more placeholders supported.

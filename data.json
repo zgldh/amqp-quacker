@@ -13,6 +13,8 @@
   "Hz": "q:float:49,51",
   "Direction": "q:int:0,359",
   "address": 150,
-  "drop": "q:string:nothing,rain,snow,rain_snow,hail,rain_hail,snow_hail,rain_snow_hail,testing",
-  "id": "A6123456789A"
+  "drop": "It dropped {q:string:nothing,rain,snow,rain_snow,hail,rain_hail,snow_hail,rain_snow_hail,testing}",
+  "id": "A6123456789A",
+  "timestamp": "{q:timestamp:Mon Jan _2 15:04:05 MST 2006}",
+  "another_timestamp": "{q:timestamp}"
 }
